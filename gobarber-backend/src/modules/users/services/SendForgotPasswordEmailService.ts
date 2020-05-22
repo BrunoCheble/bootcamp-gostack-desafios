@@ -1,8 +1,9 @@
 // import AppError from '@shared/errors/AppError';
 import { injectable, inject } from 'tsyringe';
 // import User from '../infra/typeorm/entities/User';
-import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 import AppError from '@shared/errors/AppError';
+
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 import IUsersRepository from '../repositories/IUsersRepository';
 import IUserTokensRepository from '../repositories/IUserTokensRepository';
 
