@@ -4,15 +4,20 @@ import FakeStorageProvider from '@shared/container/providers/StorageProvider/fak
 import UpdateUserAvatarService from './UpdateUserAvatarService';
 import FakeUserRepository from '../repositories/fakes/FakeUsersRepository';
 
+let fakeStorageProvider: FakeStorageProvider;
+let fakeUserRepository: FakeUserRepository;
+let updateAvatar: UpdateUserAvatarService;
+
 describe('UpdateUserAvatar', () => {
-  it('should be able to update avatar from user', async () => {
-    const fakeStorageProvider = new FakeStorageProvider();
-    const fakeUserRepository = new FakeUserRepository();
-    const updateAvatar = new UpdateUserAvatarService(
+  beforeEach(() => {
+    fakeStorageProvider = new FakeStorageProvider();
+    fakeUserRepository = new FakeUserRepository();
+    updateAvatar = new UpdateUserAvatarService(
       fakeUserRepository,
       fakeStorageProvider,
     );
-
+  });
+  it('should be able to update avatar from user', async () => {
     const user = await fakeUserRepository.create({
       name: 'John Doe',
       email: 'johndoe@email.com',
@@ -28,13 +33,6 @@ describe('UpdateUserAvatar', () => {
   });
 
   it('should not be able to update avatar from non existing user', async () => {
-    const fakeStorageProvider = new FakeStorageProvider();
-    const fakeUserRepository = new FakeUserRepository();
-    const updateAvatar = new UpdateUserAvatarService(
-      fakeUserRepository,
-      fakeStorageProvider,
-    );
-
     await expect(
       updateAvatar.execute({
         user_id: 'non-existing-user',
@@ -44,13 +42,6 @@ describe('UpdateUserAvatar', () => {
   });
 
   it('should delete old avatar when updating new one', async () => {
-    const fakeStorageProvider = new FakeStorageProvider();
-    const fakeUserRepository = new FakeUserRepository();
-    const updateAvatar = new UpdateUserAvatarService(
-      fakeUserRepository,
-      fakeStorageProvider,
-    );
-
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
     const user = await fakeUserRepository.create({
       name: 'John Doe',
