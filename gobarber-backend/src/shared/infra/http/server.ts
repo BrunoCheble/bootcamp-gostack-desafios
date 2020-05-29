@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cors());
 
 // middleware para upload
-routes.use('/files', express.static(uploadConfig.directory));
+routes.use('/files', express.static(uploadConfig.uploadsFolder));
 
 app.use(routes);
 app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
