@@ -2,7 +2,7 @@ import { injectable, inject } from 'tsyringe';
 // import { getDate, getDaysInMonth } from 'date-fns';
 
 // import User from '@modules/users/infra/typeorm/entities/User';
-import { getHours } from 'date-fns';
+import { getHours, isAfter } from 'date-fns';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
 interface IRequest {
@@ -45,11 +45,18 @@ class ListProviderDayAvailabilityService {
       (_, index) => index + hourStart,
     );
 
+    const currentDate = new Date(Date.now());
     const availability = eachHourArray.map((hour) => {
       const hasAppointmentInHour = appointments.find(
         ({ date }) => getHours(date) === hour,
       );
-      return { hour, availability: !hasAppointmentInHour };
+      const compareDate = new Date(year, month - 1, day, hour);
+      // isAfter()
+      return {
+        hour,
+        availability:
+          !hasAppointmentInHour && isAfter(compareDate, currentDate),
+      };
     });
     return availability;
   }
