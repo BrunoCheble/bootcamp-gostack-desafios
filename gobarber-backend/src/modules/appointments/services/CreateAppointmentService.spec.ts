@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'dotenv/config';
 import AppError from '@shared/errors/AppError';
 import FakeNotificationsRepository from '@modules/notifications/repositories/fakes/FakeNotificationsRepository';
 import CreateAppointmentService from './CreateAppointmentService';
