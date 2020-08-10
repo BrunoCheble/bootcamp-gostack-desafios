@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 import { FiArrowLeft, FiMail, FiLock } from 'react-icons/fi';
@@ -12,6 +12,7 @@ import { useToast } from '../../hooks/toast';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -22,10 +23,13 @@ interface ForgotPasswordFormData {
 const ForgotPassword: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmitSignIn = useCallback(
     async (data: ForgotPasswordFormData) => {
       try {
+        setLoading(true);
+
         formRef.current?.setErrors([]);
         const schema = Yup.object().shape({
           email: Yup.string()
@@ -35,6 +39,16 @@ const ForgotPassword: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
 
+        /* Recuperação de senha */
+        await api.post('password/forgot', {
+          email: data.email
+        });
+
+        addToast({
+          title: 'E-mail de recuperação de senha',
+          description: 'Foi enviado um e-mail para recuperação de senha, verifique sua conta de e-mail.',
+          type: 'success'
+        })
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -47,9 +61,11 @@ const ForgotPassword: React.FC = () => {
           title: 'Erro na recuperação de senha',
           description: 'Houve um erro na recuperação de senha, tente novamente.',
         });
+      } finally {
+        setLoading(false);
       }
     },
-    [addToast],
+    [addToast, setLoading],
   );
 
   return (
@@ -60,7 +76,7 @@ const ForgotPassword: React.FC = () => {
           <Form ref={formRef} onSubmit={handleSubmitSignIn}>
             <h1>Recuperar senha</h1>
             <Input icon={FiMail} name="email" placeholder="E-mail" />
-            <Button type="submit">Recuperar</Button>
+            <Button loading={loading} type="submit">Recuperar</Button>
           </Form>
           <Link to="/">
             <FiArrowLeft />
