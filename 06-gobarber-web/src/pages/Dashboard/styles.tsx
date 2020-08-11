@@ -139,6 +139,9 @@ div {
 export const Section = styled.section`
   margin-top: 48px;
 
+  > p {
+    color: #666360
+  }
   > strong {
     color: #999591;
     font-size: 20px;
